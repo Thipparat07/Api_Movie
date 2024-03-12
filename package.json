@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/busboy": "^2.1.1",
+    "@firebase/storage": "^0.12.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/multer": "^1.4.11",
