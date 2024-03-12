@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dicer": "^0.3.0",
     "@fastify/busboy": "^2.1.1",
     "@firebase/storage": "^0.12.2",
     "@types/cors": "^2.8.17",
