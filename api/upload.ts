@@ -71,6 +71,13 @@ import express from "express";
 import multer from "multer";
 import { getStorage, ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { initializeApp } from "firebase/app";
+import fastify from 'fastify';
+// นอกจากนี้คุณอาจต้องนำเข้าแพคเกจอื่น ๆ ที่คุณใช้
+
+const app = fastify();
+
+// Use Fastify Busboy for handling file uploads
+
 export const router = express.Router();
 
 // Load environment variables from .env file
