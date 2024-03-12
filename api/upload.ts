@@ -68,16 +68,10 @@
 // });
 
 import express from "express";
-import multer from "multer";
+import multer from 'multer';
 import { getStorage, ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { initializeApp } from "firebase/app";
-import fastify from 'fastify';
-// นอกจากนี้คุณอาจต้องนำเข้าแพคเกจอื่น ๆ ที่คุณใช้
-
-const app = fastify();
-
-// Use Fastify Busboy for handling file uploads
-
+import path from 'path';  // เพิ่มการนำเข้าโมดูล path
 export const router = express.Router();
 
 // Load environment variables from .env file
@@ -112,6 +106,12 @@ class FileMiddleware {
     limits: {
       fileSize: 67108864, // 64 MByte
     },
+    // Handle file upload and set the filename
+    fileFilter: (req, file, cb) => {
+      const ext = path.extname(file.originalname);
+      this.filename = Date.now() + "-" + Math.round(Math.random() * 10000) + ext;
+      cb(null, true);
+    },
   });
 }
 
@@ -121,7 +121,8 @@ const fileUpload = new FileMiddleware();
 
 // Handle POST request for file upload
 router.post("/", fileUpload.diskLoader.single("file"), async (req, res) => {
-  const filename = Date.now() + "-" + Math.round(Math.random() * 10000) + ".png";
+  console.log("File uploaded:", fileUpload.filename);  // ตรวจสอบให้แน่ใจว่ามีการกำหนดค่าถูกต้อง
+  const filename = fileUpload.filename;  // ใช้ค่าที่กำหนดไว้
   const storageRef = ref(storage, "/images/" + filename);
 
   const metadata = {
@@ -132,7 +133,7 @@ router.post("/", fileUpload.diskLoader.single("file"), async (req, res) => {
   const url = await getDownloadURL(snapshot.ref);
 
   res.status(200).json({
-    file: url + fileUpload.filename
+    file: url + filename  // ใช้ filename ที่กำหนดไว้
   });
 });
 
@@ -140,5 +141,7 @@ router.post("/", fileUpload.diskLoader.single("file"), async (req, res) => {
 router.get('/', (req, res) => {
   res.send('Method Get in upload.ts');
 });
+
+
 
 
